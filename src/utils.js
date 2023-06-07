@@ -1,8 +1,11 @@
 import dayjs from 'dayjs';
+
 const EVENT_DATE_FORMAT = 'MMM D';
 const EVENT_TIME_FORMAT = 'H:mm';
-const EVENT_YEARS_FORMAT = 'DD/MM/YY H:mm';
+const EVENT_YEARS_FORMAT = 'DD/MM/YY HH:mm';
+
 const getRandomItemFromItems = (items) => items[Math.floor(Math.random() * items.length)];
+
 const getRandomPrice = () => Math.floor(Math.random() * 100000) + 777;
 const getRandomId = () => Math.floor(Math.random() * 100) + 1;
 const getRandomSliceFromItems = (items) => {
@@ -31,7 +34,26 @@ const getDateWithT = (dateStr) => dateStr.substring(0, dateStr.lastIndexOf(':'))
 const getTime = (dateStr) => dayjs(dateStr).format(EVENT_TIME_FORMAT);
 const getDateYears = (date) => dayjs(date).format(EVENT_YEARS_FORMAT);
 
-export {getRandomItemFromItems, getRandomPrice, getRandomSliceFromItems,
-  getRandomId, createIDgenerator, getRandomArrayElement, getDateWithoutT,
-  getDateDayAndMo, getDateWithT, getTime, getItemFromItemsById, getDateYears,
-  isEsc,changeType,isTripDateBeforeToday};
+const updateWaypoint = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
+const makeFirstLetterUpperCase = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+
+export {
+  getRandomItemFromItems,
+  getRandomPrice,
+  getRandomSliceFromItems,
+  getRandomId,
+  createIDgenerator,
+  getRandomArrayElement,
+  getDateWithoutT,
+  getDateDayAndMo,
+  getDateWithT,
+  getTime,
+  getItemFromItemsById,
+  getDateYears,
+  isEsc,
+  changeType,
+  isTripDateBeforeToday,
+  updateWaypoint,
+  makeFirstLetterUpperCase
+};

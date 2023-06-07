@@ -43,126 +43,108 @@ const variousDates = [
   }
 ];
 
-const taxiOffers = [{
-  id: 1,
-  title: 'Upgrade a business class',
-  price: 120
-}, {
-  id: 3,
-  title: 'Switch to comfort',
-  price: 50
-}];
 
-const busOffers = [{
-  id: 7,
-  title: 'Choose seats',
-  price: 10
-}];
-
-const trainOffers = [{
-  id: 1,
-  title: 'Food order',
-  price: 70
-}, {
-  id: 5,
-  title: 'Choose seats',
-  price: 20
-}, {
-  id: 7,
-  title: 'Drinks order',
-  price: 50
-}];
-
-const shipOffers = [{
-  id: 3,
-  title: 'Bring a blanket',
-  price: 12
-}, {
-  id: 8,
-  title: 'Change cabin',
-  price: 76
-}, {
-  id: 2,
-  title: 'Add alcohol',
-  price: 100
-}];
-
-const driveOffers = [{
-  id: 9,
-  title: 'Upgrade a car',
-  price: 150
-}];
-
-const flightOffers = [{
-  id: 1,
-  title: 'Food order',
-  price: 70
-},{
-  id: 7,
-  title: 'Drinks order',
-  price: 50
-}, {
-  id: 5,
-  title: 'Choose seats',
-  price: 70
-}, {
-  id: 6,
-  title: 'Travel by ship',
-  price: 100
-}];
-
-const sightseeingOffers = [];
-
-const restaurantOffers = [{
-  id: 1,
-  title: 'Choose seats',
-  price: 35
-}];
-
-const checkInOffers = [{
-  id: 6,
-  title: 'Online',
-  price: 15
-}];
-
-const offersByType = [{
-  type: 'taxi',
-  offers: taxiOffers
-},
-{
-  type: 'bus',
-  offers: busOffers
-},
-{
-  type: 'train',
-  offers: trainOffers
-},
-{
-  type: 'ship',
-  offers: shipOffers
-},
-{
-  type: 'drive',
-  offers: driveOffers
-},
-{
-  type: 'flight',
-  offers: flightOffers
-},
-{
-  type: 'check-in',
-  offers: checkInOffers
-},
-{
-  type: 'sightseeing',
-  offers: sightseeingOffers
-},
-{
-  type: 'restaurant',
-  offers: restaurantOffers
-},];
-
-const getOffersByType = (type) => offersByType.find((currentTypeOffers) => currentTypeOffers.type === type).offers;
+const offersByType = [
+  {
+    type: 'taxi',
+    offers: [{
+      id: 1,
+      title: 'Upgrade a business class',
+      price: 120
+    }, {
+      id: 3,
+      title: 'Switch to comfort',
+      price: 50
+    }]
+  },
+  {
+    type: 'bus',
+    offers: [{
+      id: 7,
+      title: 'Choose seats',
+      price: 10
+    }]
+  },
+  {
+    type: 'train',
+    offers: [{
+      id: 1,
+      title: 'Food order',
+      price: 70
+    }, {
+      id: 5,
+      title: 'Choose seats',
+      price: 20
+    }, {
+      id: 7,
+      title: 'Drinks order',
+      price: 50
+    }]
+  },
+  {
+    type: 'ship',
+    offers: [{
+      id: 3,
+      title: 'Bring a blanket',
+      price: 12
+    }, {
+      id: 8,
+      title: 'Change cabin',
+      price: 76
+    }, {
+      id: 2,
+      title: 'Add alcohol',
+      price: 100
+    }]
+  },
+  {
+    type: 'drive',
+    offers: [{
+      id: 9,
+      title: 'Upgrade a car',
+      price: 150
+    }]
+  },
+  {
+    type: 'flight',
+    offers: [{
+      id: 1,
+      title: 'Food order',
+      price: 70
+    }, {
+      id: 7,
+      title: 'Drinks order',
+      price: 50
+    }, {
+      id: 5,
+      title: 'Choose seats',
+      price: 70
+    }, {
+      id: 6,
+      title: 'Travel by ship',
+      price: 100
+    }]
+  },
+  {
+    type: 'check-in',
+    offers: [{
+      id: 6,
+      title: 'Online',
+      price: 15
+    }]
+  },
+  {
+    type: 'sightseeing',
+    offers: [{
+      id: 6,
+      title: 'Online',
+      price: 15
+    }]
+  },
+  {
+    type: 'restaurant',
+    offers: []
+  },];
 
 const descrText = [
   'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
@@ -188,4 +170,4 @@ const SortType = {
   OFFER: 'offer'
 };
 
-export {pointTypes, variousDates, offersByType, getOffersByType, descrText, cities, FilterType, SortType};
+export {pointTypes, variousDates, offersByType, descrText, cities, FilterType, SortType};
