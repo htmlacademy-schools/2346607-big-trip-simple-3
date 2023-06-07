@@ -1,5 +1,5 @@
-import {offersByType } from './const';
-import { getRandomSliceFromItems } from '../utils';
+import {offersByType } from './const.js';
+import { getRandomSliceFromItems } from '../utils.js';
 
 
 const getRandomOffersIdsByType = (type) => {
