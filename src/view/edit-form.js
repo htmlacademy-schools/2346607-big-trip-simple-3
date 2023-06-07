@@ -1,9 +1,9 @@
-import {getDateYears, getItemFromItemsById} from '../utils';
-import {pointTypes} from '../mock/const';
-import {makeFirstLetterUpperCase} from '../utils';
+import {getDateYears, getItemFromItemsById, makeFirstLetterUpperCase} from '../utils.js';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
-import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {pointTypes} from '../const.js';
 
 const BLANK_WAYPOINT = {
   basePrice: 77777,
@@ -14,13 +14,11 @@ const BLANK_WAYPOINT = {
   offersIDs: [],
   type: 'taxi',
 };
-
 function createDetinationListTemplate(destinations) {
   return destinations.map((destination) => `
     <option value="${destination.name}"></option>`
   ).join('');
 }
-
 function createOffersTemplate(offersIDs, curTypeOffers, id) {
   return curTypeOffers.map((offer) => {
     const isOfferChecked = offersIDs.includes(offer.id) ? 'checked' : '';
@@ -76,7 +74,7 @@ function createEditFormTemplate(isEditForm, oneWaypoint, offers, destinations) {
         <label class="event__label  event__type-output" for="event-destination-${oneWaypoint.id}">
           ${makeFirstLetterUpperCase(oneWaypoint.type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${oneWaypoint.id}" type="text" name="event-destination" value="${(itemDest) ? itemDest.name : ''}" list="destination-list-${oneWaypoint.id}" autocomplete="off">
+        <input class="event__input  event__input--destination" id="event-destination-${oneWaypoint.id}" type="text" name="event-destination" value="${(itemDest) ? he.encode(itemDest.name) : ''}" list="destination-list-${oneWaypoint.id}" autocomplete="off">
         <datalist id="destination-list-${oneWaypoint.id}">
           ${createDetinationListTemplate(destinations)}
         </datalist>
@@ -165,7 +163,6 @@ export default class EditForm extends AbstractStatefulView {
     this.#handleSubmit = onSubmit;
     this.#handleRollUp = onRollUpButton;
     this.#handleDeleteClick = onDeleteClick;
-
     this._restoreHandlers();
   }
 
@@ -181,7 +178,6 @@ export default class EditForm extends AbstractStatefulView {
     }
     this.#setFromDatePicker();
     this.#setToDatePicker();
-
   }
 
   removeElement() {
