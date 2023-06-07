@@ -1,14 +1,14 @@
-import Sorting from '../view/sort.js';
-import WaypointList from '../view/waypoint-list.js';
-import NoWaypointMessage from '../view/no-waypoints.js';
+import Sorting from '../view/sort-view.js';
+import WaypointList from '../view/waypoint-list-view.js';
+import NoWaypointMessage from '../view/no-waypoints-view.js';
 import {remove, render, RenderPosition} from '../framework/render.js';
 import WaypointPresenter from './waypoint-presenter.js';
 import {FilterType, SortType, UpdateType, UserAction} from '../const.js';
+import NewWaypointPresenter from './new-waypoint-presenter.js';
+import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {sorts} from '../sort.js';
 import {filter} from '../utils.js';
-import NewWaypointPresenter from './new-waypoint-presenter.js';
-import LoadingView from '../view/loading.js';
-import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,

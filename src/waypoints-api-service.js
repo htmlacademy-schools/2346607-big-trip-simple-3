@@ -35,7 +35,6 @@ export default class WaypointsApiService extends ApiService {
     return parsedResponse;
   }
 
-
   async addWaypoint(waypoint) {
     const response = await this._load({
       url: 'points',
@@ -71,6 +70,7 @@ export default class WaypointsApiService extends ApiService {
     delete adaptedWaypoint.dateTo;
     delete adaptedWaypoint.basePrice;
     delete adaptedWaypoint.offersIDs;
+
     return adaptedWaypoint;
   }
 }
