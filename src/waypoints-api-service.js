@@ -32,14 +32,37 @@ export default class WaypointsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
+    return parsedResponse;
+  }
+
+
+  async addWaypoint(waypoint) {
+    const response = await this._load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(waypoint)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
   }
 
+  async deleteWaypoint(waypoint) {
+    const response = await this._load({
+      url: `points/${waypoint.id}`,
+      method: Method.DELETE,
+    });
+
+    return response;
+  }
+
   #adaptToServer(waypoint) {
-    const adaptedWaypoint = {...waypoint,
-      'date_from': new Date(waypoint.dateFrom).toISOString(),
-      'date_to': new Date(waypoint.dateTo).toISOString(),
+    const adaptedWaypoint = {
+      ...waypoint,
+      'date_from': (waypoint.dateFrom) ? new Date(waypoint.dateFrom).toISOString() : new Date().toISOString,
+      'date_to': (waypoint.dateFrom) ? new Date(waypoint.dateTo).toISOString() : new Date().toISOString,
       'base_price': Number(waypoint.basePrice),
       'offers': waypoint.offersIDs
     };
@@ -48,7 +71,6 @@ export default class WaypointsApiService extends ApiService {
     delete adaptedWaypoint.dateTo;
     delete adaptedWaypoint.basePrice;
     delete adaptedWaypoint.offersIDs;
-
     return adaptedWaypoint;
   }
 }
