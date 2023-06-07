@@ -1,6 +1,6 @@
 import {render, replace, remove} from '../framework/render.js';
-import WaypointView from '../view/waypoint.js';
-import EditForm from '../view/edit-form.js';
+import WaypointView from '../view/waypoint-view.js';
+import EditForm from '../view/edit-form-view.js';
 import {isDatesEqual, isEsc} from '../utils.js';
 import {UpdateType, UserAction} from '../const.js';
 
