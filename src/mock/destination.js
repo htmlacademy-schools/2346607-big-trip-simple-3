@@ -1,5 +1,5 @@
-import { getRandomId, getRandomItemFromItems, createIDgenerator } from '../utils.js';
-import { descrText, cities } from './const.js';
+import {getRandomId, getRandomItemFromItems, createIDgenerator} from '../utils';
+import {descrText, cities} from './const';
 
 const destinations = [];
 
@@ -14,9 +14,7 @@ const generatePictures = () => {
   }
   return pictures;
 };
-
 const generateDestinationId = createIDgenerator();
-
 const generateDestinations = (n) => {
   for (let i = 0; i < n; i++) {
     const destination = {
@@ -30,6 +28,6 @@ const generateDestinations = (n) => {
 };
 
 
-const getDestinationByID = (id) => destinations.find((item)=>item.id === id);
+const getDestinationByID = (id) => destinations.find((item) => item.id === id);
 
 export {generateDestinations, destinations, getDestinationByID};

@@ -1,6 +1,5 @@
 const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-
 const variousDates = [
   {
     dateFrom: '2023-01-17T18:12:13.375Z',
@@ -43,7 +42,6 @@ const variousDates = [
     dateTo: '2023-07-30T18:15:18.375Z'
   }
 ];
-
 
 const taxiOffers = [{
   id: 1,
@@ -127,7 +125,6 @@ const checkInOffers = [{
   price: 15
 }];
 
-
 const offersByType = [{
   type: 'taxi',
   offers: taxiOffers
@@ -165,29 +162,7 @@ const offersByType = [{
   offers: restaurantOffers
 },];
 
-
-const getOffersByType = (type) => {
-  switch (type) {
-    case 'taxi':
-      return taxiOffers;
-    case 'bus':
-      return busOffers;
-    case 'train':
-      return trainOffers;
-    case 'ship':
-      return shipOffers;
-    case 'drive':
-      return driveOffers;
-    case 'flight':
-      return flightOffers;
-    case 'check-in':
-      return checkInOffers;
-    case 'sightseeing':
-      return sightseeingOffers;
-    case 'restaurant':
-      return restaurantOffers;
-  }
-};
+const getOffersByType = (type) => offersByType.find((currentTypeOffers) => currentTypeOffers.type === type).offers;
 
 const descrText = [
   'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
