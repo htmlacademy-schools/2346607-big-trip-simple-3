@@ -1,4 +1,4 @@
-import dayjs from 'dayjs.js';
+import dayjs from 'dayjs';
 import {SortType} from './const.js';
 
 const offOptions = ['event', 'offer'];
