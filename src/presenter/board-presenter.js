@@ -1,6 +1,6 @@
 import SortView from '../view/sort-view';
 import EventListView from '../view/events-list-view';
-import EventItemView from '../view/event-item-view';
+import EventItemView from '../view/events-item-view';
 import EditFormView from '../view/edit-point-view';
 import NewItemFormView from '../view/create-form-view';
 import { render } from '../render';
