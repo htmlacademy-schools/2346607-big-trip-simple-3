@@ -1,8 +1,9 @@
-import {getDateYears, getItemFromItemsById, makeFirstLetterUpperCase} from '../utils.js';
-import {pointTypes} from '../mock/const.js';
-import flatpickr from 'flatpickr.js';
+import {getDateYears, getItemFromItemsById} from '../utils';
+import {pointTypes} from '../mock/const';
+import {makeFirstLetterUpperCase} from '../utils';
+import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
-import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
 const BLANK_WAYPOINT = {
   basePrice: 77777,
@@ -25,8 +26,8 @@ function createOffersTemplate(offersIDs, curTypeOffers, id) {
     const isOfferChecked = offersIDs.includes(offer.id) ? 'checked' : '';
     return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').at(0)}-${id}" type="checkbox" name="event-offer-${offer.title.split(' ').at(0)}" ${isOfferChecked}>
-      <label class="event__offer-label" for="event-offer-${offer.title.split(' ').at(0)}-${id}">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-${id}" type="checkbox" name="event-offer-${offer.id}" ${isOfferChecked}>
+      <label class="event__offer-label" for="event-offer-${offer.id}-${id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
@@ -75,7 +76,7 @@ function createEditFormTemplate(isEditForm, oneWaypoint, offers, destinations) {
         <label class="event__label  event__type-output" for="event-destination-${oneWaypoint.id}">
           ${makeFirstLetterUpperCase(oneWaypoint.type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${oneWaypoint.id}" type="text" name="event-destination" value="${(itemDest) ? itemDest.name : ''}" list="destination-list-${oneWaypoint.id}">
+        <input class="event__input  event__input--destination" id="event-destination-${oneWaypoint.id}" type="text" name="event-destination" value="${(itemDest) ? itemDest.name : ''}" list="destination-list-${oneWaypoint.id}" autocomplete="off">
         <datalist id="destination-list-${oneWaypoint.id}">
           ${createDetinationListTemplate(destinations)}
         </datalist>
@@ -92,7 +93,7 @@ function createEditFormTemplate(isEditForm, oneWaypoint, offers, destinations) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${oneWaypoint.id}" type="text" name="event-price" value="${oneWaypoint.basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${oneWaypoint.id}" type="number" name="event-price" value="${oneWaypoint.basePrice}">
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${(isEditForm) ? 'Delete' : 'Cancel'}</button>
@@ -130,7 +131,7 @@ export default class EditForm extends AbstractStatefulView {
   #isEditForm = null;
   #fromDatepicker = null;
   #toDatepicker = null;
-
+  #handleDeleteClick = null;
   #destinations = [];
   #offers = [];
 
@@ -153,7 +154,8 @@ export default class EditForm extends AbstractStatefulView {
     destinations,
     isEditForm = true,
     onSubmit = () => (0),
-    onRollUpButton
+    onRollUpButton,
+    onDeleteClick
   }) {
     super();
     this._setState(EditForm.parseWaypointToState(oneWaypoint, offers));
@@ -162,23 +164,21 @@ export default class EditForm extends AbstractStatefulView {
     this.#isEditForm = isEditForm;
     this.#handleSubmit = onSubmit;
     this.#handleRollUp = onRollUpButton;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
-
   }
 
   _restoreHandlers() {
-
-    if (this.#isEditForm) {
-      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpButtonHandler);
-    }
-
     this.element.querySelector('.event--edit').addEventListener('submit', this.#submitHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersHandler);
-
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    if (this.#isEditForm) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollUpButtonHandler);
+    }
     this.#setFromDatePicker();
     this.#setToDatePicker();
 
@@ -186,12 +186,10 @@ export default class EditForm extends AbstractStatefulView {
 
   removeElement() {
     super.removeElement();
-
     if (this.#fromDatepicker) {
       this.#fromDatepicker.destroy();
       this.#fromDatepicker = null;
     }
-
     if (this.#toDatepicker) {
       this.#toDatepicker.destroy();
       this.#toDatepicker = null;
@@ -218,14 +216,12 @@ export default class EditForm extends AbstractStatefulView {
     this.#handleRollUp();
   };
 
-
   #fromDateChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate.toISOString(),
     });
     this.#toDatepicker.set('minDate', userDate);
   };
-
 
   #toDateChangeHandler = ([userDate]) => {
     this.updateElement({
@@ -283,7 +279,7 @@ export default class EditForm extends AbstractStatefulView {
 
   #offersHandler = (evt) => {
     evt.preventDefault();
-    const clickedOfferId = this._state.curTypeOffers.find((offer) => offer.title.split(' ').at(0) === evt.target.name.split('-').at(-1)).id;
+    const clickedOfferId = Number(evt.target.name.split('-').at(-1));
     const newOffersIds = this._state.offersIDs.slice();
     if (newOffersIds.includes(clickedOfferId)) {
       newOffersIds.splice(newOffersIds.indexOf(clickedOfferId), 1);
@@ -293,5 +289,10 @@ export default class EditForm extends AbstractStatefulView {
     this._setState({
       offersIDs: newOffersIds
     });
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditForm.parseStateToWaypoint(this._state));
   };
 }
