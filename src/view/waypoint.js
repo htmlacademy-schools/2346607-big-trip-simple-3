@@ -1,4 +1,4 @@
-import {getDateDayAndMo, getDateWithoutT, getDateWithT, getTime, getItemFromItemsById} from '../utils';
+import {getDateDayAndMo, getDateWithoutT, getDateWithT, getTime, getItemFromItemsById} from '../utils.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import he from 'he';
 
@@ -15,15 +15,7 @@ function createOffersTemplate(selectedOffersIDs, offers, type) {
 }
 
 function createWaypointTemplate(oneWaypoint, destinations, offers) {
-  // eslint-disable-next-line no-console
-  console.log(destinations);
-  // eslint-disable-next-line no-console
-  console.log(offers);
-  // eslint-disable-next-line no-console
-  console.log(oneWaypoint);
   const itemDest = getItemFromItemsById(destinations, oneWaypoint.destination);
-  // eslint-disable-next-line no-console
-  console.log(itemDest);
 
   return (
     `<li class="trip-events__item">

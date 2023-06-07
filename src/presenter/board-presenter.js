@@ -8,6 +8,12 @@ import {sorts} from '../sort.js';
 import {filter} from '../utils.js';
 import NewWaypointPresenter from './new-waypoint-presenter.js';
 import LoadingView from '../view/loading.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class BoardPresenter {
   #waypointListComponent = new WaypointList();
@@ -16,6 +22,12 @@ export default class BoardPresenter {
   #filterType = FilterType.EVERYTHING;
   #loadingComponent = new LoadingView();
   #isLoading = true;
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
+
   #boardContainer = null;
   #waypointsModel = null;
   #modelOffers = null;
@@ -31,13 +43,11 @@ export default class BoardPresenter {
     this.#modelOffers = modelOffers;
     this.#modelDestinations = modelDestinations;
     this.#modelFilter = modelFilter;
-
     this.#newWaypointPresenter = new NewWaypointPresenter({
       waypointListContainer: this.#waypointListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewWaypointDestroy
     });
-
     this.#waypointsModel.addObserver(this.#handleModelEvent);
     this.#modelFilter.addObserver(this.#handleModelEvent);
   }
@@ -119,7 +129,6 @@ export default class BoardPresenter {
     this.#renderWaypointsList(waypoints);
   }
 
-
   #renderLoading() {
     render(this.#loadingComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
@@ -133,18 +142,36 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
-      case UserAction.UPDATE_WAYPOINT:
-        this.#waypointsModel.updateWaypoint(updateType, update);
-        break;
       case UserAction.ADD_WAYPOINT:
-        this.#waypointsModel.addWaypoint(updateType, update);
+        this.#newWaypointPresenter.setSaving();
+        try {
+          await this.#waypointsModel.addWaypoint(updateType, update);
+        } catch (err) {
+          this.#waypointPresenter.get(update.id).setAborting();
+        }
+        break;
+
+      case UserAction.UPDATE_WAYPOINT:
+        this.#waypointPresenter.get(update.id).setSaving();
+        try {
+          await this.#waypointsModel.updateWaypoint(updateType, update);
+        } catch (err) {
+          this.#waypointPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.DELETE_WAYPOINT:
-        this.#waypointsModel.deleteWaypoint(updateType, update);
+        this.#waypointPresenter.get(update.id).setDeleting();
+        try {
+          await this.#waypointsModel.deleteWaypoint(updateType, update);
+        } catch (err) {
+          this.#waypointPresenter.get(update.id).setAborting();
+        }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

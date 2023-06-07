@@ -12,7 +12,7 @@ const siteHeaderElement = document.querySelector('.trip-controls__filters');
 const container = document.querySelector('.trip-events');
 const placeForButton = document.querySelector('.trip-main');
 
-const AUTHORIZATION = 'Basic sgkdajgskdgas7777';
+const AUTHORIZATION = 'Basic sgkdajgskdas';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const waypointsApiService = new WaypointsApiService(END_POINT, AUTHORIZATION);
@@ -30,28 +30,22 @@ const boardPresenter = new BoardPresenter({
   modelFilter,
   onNewWaypointDestroy: handleNewTaskFormClose
 });
-
 const filterPresenter = new FilterPresenter({
   filterContainer: siteHeaderElement,
   modelFilter,
   modelWaypoints
 });
-
 const newWaypointButtonComponent = new NewWaypointButton({
   onClick: handleNewTaskButtonClick
 });
-
 function handleNewTaskFormClose() {
   newWaypointButtonComponent.element.disabled = false;
 }
-
 function handleNewTaskButtonClick() {
   boardPresenter.createWaypoint();
   newWaypointButtonComponent.element.disabled = true;
 }
-
 filterPresenter.init();
-
 boardPresenter.init();
 modelWaypoints.init()
   .finally(() => {
