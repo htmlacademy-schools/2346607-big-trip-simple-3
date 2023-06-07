@@ -1,6 +1,6 @@
-import AbstractView from '../framework/view/abstract-view';
-import {SortType, SortTypeDescription} from '../mock/const';
-import {isSelectedOption} from '../mock/sort';
+import AbstractView from '../framework/view/abstract-view.js';
+import {SortType, SortTypeDescription} from '../const.js';
+import {isSelectedOption} from '../sort.js';
 
 function createSortItemTemplate(sortType, currentSortType) {
   return `

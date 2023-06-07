@@ -1,4 +1,4 @@
-import {FilterType, FilterTypeDescriptions, UpdateType} from '../mock/const.js';
+import {FilterType, FilterTypeDescriptions, UpdateType} from '../const.js';
 import Filters from '../view/filters.js';
 import {render} from '../render.js';
 import {remove, replace} from '../framework/render.js';
@@ -7,14 +7,12 @@ export default class FilterPresenter {
   #filterContainer = null;
   #modelFilter = null;
   #modelWaypoints = null;
-
   #filterComponent = null;
 
   constructor({filterContainer, modelFilter, modelWaypoints}) {
     this.#filterContainer = filterContainer;
     this.#modelFilter = modelFilter;
     this.#modelWaypoints = modelWaypoints;
-
     this.#modelWaypoints.addObserver(this.#handleModelEvent);
     this.#modelFilter.addObserver(this.#handleModelEvent);
   }

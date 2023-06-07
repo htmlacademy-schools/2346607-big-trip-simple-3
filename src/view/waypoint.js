@@ -1,5 +1,6 @@
-import {getDateDayAndMo, getDateWithoutT, getDateWithT, getTime, getItemFromItemsById } from '../utils.js';
+import {getDateDayAndMo, getDateWithoutT, getDateWithT, getTime, getItemFromItemsById} from '../utils';
 import AbstractView from '../framework/view/abstract-view.js';
+import he from 'he';
 
 function createOffersTemplate(selectedOffersIDs, offers, type) {
   const currentTypeOffers = offers.find((el) => el.type === type).offers;
@@ -14,8 +15,16 @@ function createOffersTemplate(selectedOffersIDs, offers, type) {
 }
 
 function createWaypointTemplate(oneWaypoint, destinations, offers) {
-
+  // eslint-disable-next-line no-console
+  console.log(destinations);
+  // eslint-disable-next-line no-console
+  console.log(offers);
+  // eslint-disable-next-line no-console
+  console.log(oneWaypoint);
   const itemDest = getItemFromItemsById(destinations, oneWaypoint.destination);
+  // eslint-disable-next-line no-console
+  console.log(itemDest);
+
   return (
     `<li class="trip-events__item">
     <div class="event">
@@ -23,7 +32,7 @@ function createWaypointTemplate(oneWaypoint, destinations, offers) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${oneWaypoint.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${oneWaypoint.type} ${itemDest.name}</h3>
+      <h3 class="event__title">${oneWaypoint.type} ${he.encode(itemDest.name)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${getDateWithT(oneWaypoint.dateFrom)}">${getTime(oneWaypoint.dateFrom)}</time>
@@ -45,6 +54,7 @@ function createWaypointTemplate(oneWaypoint, destinations, offers) {
   </li>`
   );
 }
+
 export default class WaypointView extends AbstractView {
   #oneWaypoint = null;
   #handleClick = null;
@@ -57,7 +67,6 @@ export default class WaypointView extends AbstractView {
     this.#handleClick = onClick;
     this.#offers = offers;
     this.#destinations = destinations;
-
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
   }
 

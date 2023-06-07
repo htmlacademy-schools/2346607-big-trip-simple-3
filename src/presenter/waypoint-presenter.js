@@ -2,12 +2,13 @@ import {render, replace, remove} from '../framework/render';
 import WaypointView from '../view/waypoint';
 import EditForm from '../view/edit-form';
 import {isDatesEqual, isEsc} from '../utils';
-import {UpdateType, UserAction} from '../mock/const';
+import {UpdateType, UserAction} from '../const';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
 };
+
 export default class WaypointPresenter {
   #handleModeChange = null;
   #waypointList = null;
@@ -18,6 +19,7 @@ export default class WaypointPresenter {
   #offers = [];
   #destinations = [];
   #handleDataChange = null;
+
   constructor({waypointList, onModeChange, offers, destinations, onDataChange}) {
     this.#waypointList = waypointList;
     this.#handleModeChange = onModeChange;
@@ -33,6 +35,7 @@ export default class WaypointPresenter {
     this.#waypoint = waypoint;
     this.#destinations = destinations;
     this.#offers = offers;
+
     this.#waypointComponent = new WaypointView({
       oneWaypoint: this.#waypoint,
       onClick: this.#handleEditClick,
@@ -53,12 +56,15 @@ export default class WaypointPresenter {
       render(this.#waypointComponent, this.#waypointList);
       return;
     }
+
     if (this.#mode === Mode.DEFAULT) {
       replace(this.#waypointComponent, prevWaypointComponent);
     }
+
     if (this.#mode === Mode.EDITING) {
       replace(this.#editFormComponent, prevEditFormComponent);
     }
+
     remove(prevEditFormComponent);
     remove(prevWaypointComponent);
   }
@@ -107,6 +113,7 @@ export default class WaypointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
+
     this.#replaceFormToPoint();
     document.body.removeEventListener('keydown', this.#ecsKeydown);
   };
@@ -124,5 +131,4 @@ export default class WaypointPresenter {
       waypoint,
     );
   };
-
 }
