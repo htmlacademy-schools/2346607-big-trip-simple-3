@@ -1,5 +1,5 @@
-import { FilterType } from './const';
-import { isTripDateBeforeToday } from '../utils';
+import { FilterType } from './const.js';
+import { isTripDateBeforeToday } from '../utils.js';
 
 
 const filter = {

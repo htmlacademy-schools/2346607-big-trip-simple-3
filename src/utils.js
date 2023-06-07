@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from 'dayjs.js';
 
 const EVENT_DATE_FORMAT = 'MMM D';
 const EVENT_TIME_FORMAT = 'H:mm';

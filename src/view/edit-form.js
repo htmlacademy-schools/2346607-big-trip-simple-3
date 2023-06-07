@@ -1,8 +1,8 @@
-import {getDateYears, getItemFromItemsById, makeFirstLetterUpperCase} from '../utils';
-import {pointTypes} from '../mock/const';
-import flatpickr from 'flatpickr';
+import {getDateYears, getItemFromItemsById, makeFirstLetterUpperCase} from '../utils.js';
+import {pointTypes} from '../mock/const.js';
+import flatpickr from 'flatpickr.js';
 import 'flatpickr/dist/flatpickr.css';
-import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 const BLANK_WAYPOINT = {
   basePrice: 77777,
