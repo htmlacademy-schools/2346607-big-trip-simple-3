@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createWaypointListTemplate() {
   return '<ul class="trip-events__list"></ul>';

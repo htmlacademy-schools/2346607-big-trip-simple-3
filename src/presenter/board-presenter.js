@@ -1,13 +1,12 @@
-import Sorting from '../view/sort';
-import WaypointList from '../view/event-list';
-import NoWaypointMessage from '../view/no-points';
-import {render, RenderPosition} from '../framework/render';
-import WaypointPresenter from './point-presenter';
-import {SortType} from '../mock/const';
-import {sorts} from '../mock/sort';
-import {updateWaypoint} from '../utils';
-import EditForm from '../view/edit-form';
-
+import Sorting from '../view/sort.js';
+import WaypointList from '../view/event-list.js';
+import NoWaypointMessage from '../view/no-points.js';
+import {render, RenderPosition} from '../framework/render.js';
+import WaypointPresenter from './point-presenter.js';
+import {SortType} from '../mock/const.js';
+import {sorts} from '../mock/sort.js';
+import {updateWaypoint} from '../utils.js';
+import EditForm from '../view/edit-form.js';
 export default class BoardPresenter {
   #waypointListComponent = new WaypointList();
   #noWaypointMessage = new NoWaypointMessage();

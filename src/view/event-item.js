@@ -1,7 +1,7 @@
-import {getDestinationByID} from '../mock/destination';
-import {getDateDayAndMo, getDateWithoutT, getDateWithT, getTime} from '../utils';
-import {getOfferById} from '../mock/offers';
-import AbstractView from '../framework/view/abstract-view';
+import {getDestinationByID} from '../mock/destination.js';
+import {getDateDayAndMo, getDateWithoutT, getDateWithT, getTime} from '../utils.js';
+import {getOfferById} from '../mock/offers.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createOffersTemplate(offerIds, type) {
   return offerIds.map((offerId) => {

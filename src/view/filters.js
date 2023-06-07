@@ -1,6 +1,6 @@
-import AbstractView from '../framework/view/abstract-view';
-import {changeType} from '../utils.js';
-import {FilterType} from '../mock/const';
+import AbstractView from '../framework/view/abstract-view.js';
+import {changeType} from '../utils.js.js';
+import {FilterType} from '../mock/const.js';
 
 function createFilterItemTemplate(filterType) {
   return `

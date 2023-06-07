@@ -1,7 +1,7 @@
-import {render, replace, remove} from '../framework/render';
-import WaypointView from '../view/event-item';
-import EditForm from '../view/edit-form';
-import {isEsc} from '../utils';
+import {render, replace, remove} from '../framework/render.js';
+import WaypointView from '../view/event-item.js';
+import EditForm from '../view/edit-form.js';
+import {isEsc} from '../utils.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
