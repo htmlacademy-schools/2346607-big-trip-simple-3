@@ -1,8 +1,9 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 
 function createCreationFormTemplate() {
   return (
-    `<form class="event event--edit" action="#" method="post">
+    `<li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -60,8 +61,9 @@ function createCreationFormTemplate() {
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
-Expand All
-	@@ -100,10 +77,10 @@ function createEventItemFormTemplate() {
+          <option value="Chamonix"></option>
+        </datalist>
+      </div>
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
         <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
@@ -70,8 +72,14 @@ Expand All
         <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
       </div>
       <div class="event__field-group  event__field-group--price">
-Expand All
-	@@ -119,38 +96,93 @@ function createEventItemFormTemplate() {
+        <label class="event__label" for="event-price-1">
+          <span class="visually-hidden">Price</span>
+          &euro;
+        </label>
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+      </div>
+      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__reset-btn" type="reset">Cancel</button>
     </header>
     <section class="event__details">
       <section class="event__section  event__section--offers">
@@ -133,31 +141,20 @@ Expand All
         </div>
       </section>
     </section>
-  </form>`
+  </form>
+  </li> `
   );
 }
 
-export default class CreationForm {
-  #element = null;
+export default class CreationForm extends AbstractView {
   #oneWaypoint = null;
 
   constructor(oneWaypoint) {
+    super();
     this.#oneWaypoint = oneWaypoint;
   }
 
   get template() {
     return createCreationFormTemplate(this.#oneWaypoint);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

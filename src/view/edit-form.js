@@ -1,7 +1,7 @@
-import {createElement} from '../render.js';
 import {getOffersByType} from '../mock/const';
 import {destinations} from '../mock/destination';
 import {getDateYears, getItemFromItemsById} from '../utils';
+import AbstractView from '../framework/view/abstract-view';
 
 function createOffersTemplate(offers, type) {
   return getOffersByType(type).map((offer) => {
@@ -120,27 +120,25 @@ function createEditFormTemplate(oneWaypoint) {
   );
 }
 
-export default class EditForm {
-  #element = null;
+export default class EditForm extends AbstractView {
   #oneWaypoint = null;
+  #handleSubmit = null;
 
-  constructor(oneWaypoint) {
+  constructor({oneWaypoint, onSubmit}) {
+    super();
     this.#oneWaypoint = oneWaypoint;
+    this.#handleSubmit = onSubmit;
+
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#submitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#submitHandler);
   }
 
   get template() {
     return createEditFormTemplate(this.#oneWaypoint);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #submitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSubmit();
+  };
 }
