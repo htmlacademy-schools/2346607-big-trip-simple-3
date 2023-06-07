@@ -1,76 +1,99 @@
 import CreationForm from '../view/creation-form';
-import EditForm from '../view/edit-form';
 import Sorting from '../view/sort';
-import WaypointView from '../view/event-item';
 import WaypointList from '../view/event-list';
-import {isEsc} from '../utils';
 import NoWaypointMessage from '../view/no-points';
-import {render, replace} from '../framework/render';
+import {render, RenderPosition} from '../framework/render';
+import WaypointPresenter from './point-presenter';
+import {SortType} from '../mock/const';
+import {sorts} from '../mock/sort';
 
 export default class BoardPresenter {
-  #waypointListComponent = null;
+  #waypointListComponent = new WaypointList();
+  #noWaypointMessage = new NoWaypointMessage();
+  #sortComponent = new Sorting();
+  #waypointPresenter = new Map();
+  #currentSortType = SortType.DAY;
+  #sourcedWaypoints = [];
+
   #boardContainer = null;
   #waypointsModel = null;
-  #noWaypointMessage = null;
-  #sorters = null;
+  #waypoints = null;
 
-  constructor({boardContainer, waypointsModel, sorters}) {
+  constructor({boardContainer, waypointsModel}) {
     this.#boardContainer = boardContainer;
     this.#waypointsModel = waypointsModel;
-    this.#sorters = sorters;
   }
 
   init() {
-    const waypoints = [...this.#waypointsModel.arrWaypoints];
-
-    if (waypoints.length === 0) {
-      this.#noWaypointMessage = new NoWaypointMessage();
-      render(this.#noWaypointMessage, this.#boardContainer);
-    } else {
-      this.#waypointListComponent = new WaypointList();
-      render(new Sorting(this.#sorters), this.#boardContainer);
-      render(this.#waypointListComponent, this.#boardContainer);
-      render(new CreationForm(waypoints[0]), this.#waypointListComponent.element);
-
-      for (let i = 1; i < 4; i++) {
-        this.#renderWaypoint(waypoints[i]);
-      }
-    }
+    this.#waypoints = [...this.#waypointsModel.arrWaypoints];
+    this.#renderBoard();
+    this.#sourcedWaypoints = [...this.#waypointsModel.arrWaypoints];
   }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+  }
+
+  #renderNoWaypoint() {
+    render(this.#noWaypointMessage, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #handleModeChange = () => {
+    this.#waypointPresenter.forEach((presenter) => presenter.resetView());
+  };
 
   #renderWaypoint(waypoint) {
-    const ecsHandler = (evt) => {
-      if (isEsc(evt)) {
-        evt.preventDefault();
-        replaceFormToWaypoint();
-        document.body.removeEventListener('keydown', ecsHandler);
-      }
-    };
-
-    const waypointComponent = new WaypointView({
-      oneWaypoint: waypoint,
-      onClick: () => {
-        replaceWaypointToForm.call(this);
-        document.body.addEventListener('keydown', ecsHandler);
-      }
+    const waypointPresenter = new WaypointPresenter({
+      waypointList: this.#waypointListComponent.element,
+      onModeChange: this.#handleModeChange
     });
 
-    const formComponent = new EditForm({
-      oneWaypoint: waypoint,
-      onSubmit: () => {
-        replaceFormToWaypoint.call(this);
-        document.body.removeEventListener('keydown', ecsHandler);
-      }
-    });
-
-    function replaceFormToWaypoint() {
-      replace(waypointComponent, formComponent);
-    }
-
-    function replaceWaypointToForm(){
-      replace(formComponent, waypointComponent);
-    }
-
-    render(waypointComponent, this.#waypointListComponent.element);
+    waypointPresenter.init(waypoint);
+    this.#waypointPresenter.set(waypoint.id, waypointPresenter);
   }
+
+  #renderWaypoints() {
+    this.#waypoints.forEach((waypoint) => this.#renderWaypoint(waypoint));
+  }
+
+  #renderWaypointsList() {
+    render(this.#waypointListComponent, this.#boardContainer);
+    this.#renderWaypoints();
+  }
+
+  #renderBoard() {
+    if (this.#waypoints.length === 0) {
+      render(this.#renderNoWaypoint, this.#boardContainer);
+      return;
+    }
+    this.#renderSort();
+
+    render(new CreationForm(this.#waypoints[0]), this.#waypointListComponent.element);
+    this.#renderWaypointsList();
+  }
+
+  #clearWaypointList() {
+    this.#waypointPresenter.forEach((presenter) => presenter.destroy());
+    this.#waypointPresenter.clear();
+    //remove(this.#sortComponent); в демо есть, по факту не ок
+  }
+
+  #sortWaypoints(sortType) {
+    if (sorts[sortType]) {
+      this.#waypoints.sort(sorts[sortType]);
+    } else {
+      this.#waypoints = [...this.#sourcedWaypoints];
+    }
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortWaypoints(sortType);
+    this.#clearWaypointList();
+    this.#renderWaypointsList();
+  };
 }
