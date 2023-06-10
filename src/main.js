@@ -1,18 +1,19 @@
-import BoardPresenter from './presenter/board-presenter.js';
-import ModelWaypoint from './model/model-waypoint.js';
-import ModelOffers from './model/model-offers.js';
-import ModelDestinations from './model/model-destinations.js';
+import BoardPresenter from './presenter/board-presenter';
+import ModelWaypoint from './model/model-waypoint';
+import ModelOffers from './model/model-offers';
+import ModelDestinations from './model/model-destinations';
 import ModelFilters from './model/model-filter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import {render} from './render.js';
-import NewWaypointButton from './view/new-waypoint-button-view.js';
+import NewWaypointButton from './view/new-waypoint-button.js';
 import WaypointsApiService from './waypoints-api-service.js';
+import {render} from './framework/render.js';
+
 
 const siteHeaderElement = document.querySelector('.trip-controls__filters');
 const container = document.querySelector('.trip-events');
 const placeForButton = document.querySelector('.trip-main');
 
-const AUTHORIZATION = 'Basic sgkdajgskdas';
+const AUTHORIZATION = 'Basic abcdef9876';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const waypointsApiService = new WaypointsApiService(END_POINT, AUTHORIZATION);
