@@ -6,9 +6,9 @@ import {pointTypes} from '../const.js';
 import he from 'he';
 
 const BLANK_WAYPOINT = {
-  basePrice: 500,
-  dateFrom: '2077-07-17T17:17:17.375Z',
-  dateTo: '2088-07-17T17:17:17.375Z',
+  basePrice: 50,
+  dateFrom: '2000-01-01T00:00:00.375Z',
+  dateTo: '2000-01-01T00:00:01.375Z',
   destination: undefined,
   id: 0,
   offersIDs: [],

@@ -28,15 +28,5 @@ const filter = {
   [FilterType.PAST]: (waypoints) => waypoints.filter((waypoint) => isPast(waypoint.dateFrom)),
 };
 
-export {
-  getDateWithoutT,
-  getDateDayAndMo,
-  getDateWithT,
-  getTime,
-  getItemFromItemsById,
-  getDateYears,
-  isEsc,
-  makeFirstLetterUpperCase,
-  isDatesEqual,
-  filter
-};
+export { getDateWithoutT, getDateDayAndMo, getDateWithT, getTime, getItemFromItemsById, getDateYears,
+  isEsc, makeFirstLetterUpperCase, isDatesEqual, filter };
