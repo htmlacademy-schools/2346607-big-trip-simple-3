@@ -10,6 +10,7 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {sorts} from '../sort.js';
 import {filter} from '../utils.js';
 
+
 const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
@@ -27,6 +28,7 @@ export default class BoardPresenter {
     lowerLimit: TimeLimit.LOWER_LIMIT,
     upperLimit: TimeLimit.UPPER_LIMIT
   });
+
 
   #boardContainer = null;
   #waypointsModel = null;
