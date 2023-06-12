@@ -1,90 +1,96 @@
-import {render, RenderPosition} from '../framework/render.js';
-import {UpdateType, UserAction} from '../const.js';
-import EditForm from '../view/edit-form.js';
-import {remove} from '../framework/render.js';
-import {isEsc} from '../utils.js';
+import { render, remove, RenderPosition } from '../framework/render';
+import EditFormView from '../view/edit-form';
+import { isEscapeKey } from '../utils/utils';
+import { UserAction, UpdateType } from '../const';
 
-export default class NewWaypointPresenter {
+export default class NewTripPointPresenter {
   #handleDataChange = null;
   #handleDestroy = null;
-  #waypointListContainer = null;
-  #waypointEditComponent = null;
-  constructor({waypointListContainer, onDataChange, onDestroy}) {
-    this.#waypointListContainer = waypointListContainer;
+  #tripPointListContainer = null;
+
+  #tripPointEditComponent = null;
+
+  constructor({tripPointListContainer, onDataChange, onDestroy}) {
+    this.#tripPointListContainer = tripPointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
   }
 
   init(destinations, offers) {
-    if (this.#waypointEditComponent !== null) {
+    if (this.#tripPointEditComponent !== null) {
       return;
     }
 
-    this.#waypointEditComponent = new EditForm({
+    this.#tripPointEditComponent = new EditFormView({
       destinations: destinations,
       offers: offers,
-      onSubmit: this.#handleFormSubmit,
+      onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
       isEditForm: false
     });
 
-    render(this.#waypointEditComponent, this.#waypointListContainer,
+    render(this.#tripPointEditComponent, this.#tripPointListContainer,
       RenderPosition.AFTERBEGIN);
-    document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
-  }
 
-  setSaving() {
-    this.#waypointEditComponent.updateElement({
-      isDisabled: true,
-      isSaving: true,
-    });
+    document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
   }
 
   setAborting() {
     const resetFormState = () => {
-      this.#waypointEditComponent.updateElement({
+      this.#tripPointEditComponent.updateElement({
         isDisabled: false,
         isSavinf: false,
         isDeleting: false,
       });
     };
 
-    this.#waypointEditComponent.shake(resetFormState);
+    this.#tripPointEditComponent.shake(resetFormState);
   }
 
   destroy() {
-    if (this.#waypointEditComponent === null) {
+    if (this.#tripPointEditComponent === null) {
       return;
     }
+
     this.#handleDestroy();
-    remove(this.#waypointEditComponent);
-    this.#waypointEditComponent = null;
+
+    remove(this.#tripPointEditComponent);
+    this.#tripPointEditComponent = null;
+
     document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
   }
 
+  setSaving() {
+    this.#tripPointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #ecsKeyDownHandler = (evt) => {
-    if (isEsc(evt)) {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.destroy();
     }
   };
 
-  #handleFormSubmit = (waypoint) => {
+  #handleFormSubmit = (tripPoint) => {
     this.#handleDataChange(
-      UserAction.ADD_WAYPOINT,
+      UserAction.ADD_TRIPPOINT,
       UpdateType.MINOR,
 
-      this.#deleteId(waypoint)
+      this.#deleteId(tripPoint)
     );
+
   };
 
   #handleDeleteClick = () => {
     this.destroy();
   };
 
-  #deleteId = (waypoint) => {
-    delete waypoint.id;
-    return waypoint;
+  #deleteId = (tripPoint) => {
+    delete tripPoint.id;
+    return tripPoint;
   };
 
 }
