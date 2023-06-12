@@ -1,4 +1,4 @@
-import ApiService from './framework/api-service.js';
+import ApiService from './framework/api-service';
 
 const Method = {
   GET: 'GET',
@@ -7,8 +7,8 @@ const Method = {
   DELETE: 'DELETE'
 };
 
-export default class WaypointsApiService extends ApiService {
-  get waypoints() {
+export default class TripPointApiService extends ApiService {
+  get tripPoints() {
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
   }
@@ -19,27 +19,29 @@ export default class WaypointsApiService extends ApiService {
   }
 
   get offers() {
-    return this._load({url: 'offers'})
+    const resp = this._load({url: 'offers'})
       .then(ApiService.parseResponse);
+    return resp;
   }
 
-  async updateWaypoint(waypoint) {
+  async updateTripPoint(tripPoint) {
     const response = await this._load({
-      url: `points/${waypoint.id}`,
+      url: `points/${tripPoint.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(waypoint)),
+      body: JSON.stringify(this.#adaptToServer(tripPoint)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
+
     return parsedResponse;
   }
 
-  async addWaypoint(waypoint) {
+  async addTripPoint(tripPoint) {
     const response = await this._load({
       url: 'points',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(waypoint)),
+      body: JSON.stringify(this.#adaptToServer(tripPoint)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -48,29 +50,27 @@ export default class WaypointsApiService extends ApiService {
     return parsedResponse;
   }
 
-  async deleteWaypoint(waypoint) {
+  async deleteTripPoint(tripPoint) {
     const response = await this._load({
-      url: `points/${waypoint.id}`,
+      url: `points/${tripPoint.id}`,
       method: Method.DELETE,
     });
 
     return response;
   }
 
-  #adaptToServer(waypoint) {
-    const adaptedWaypoint = {
-      ...waypoint,
-      'date_from': (waypoint.dateFrom) ? new Date(waypoint.dateFrom).toISOString() : new Date().toISOString,
-      'date_to': (waypoint.dateFrom) ? new Date(waypoint.dateTo).toISOString() : new Date().toISOString,
-      'base_price': Number(waypoint.basePrice),
-      'offers': waypoint.offersIDs
+  #adaptToServer(tripPoint) {
+    const adaptedTripPoint = {...tripPoint,
+      'date_from': (tripPoint.dateFrom) ? new Date(tripPoint.dateFrom).toISOString() : new Date().toISOString,
+      'date_to': (tripPoint.dateFrom) ? new Date(tripPoint.dateTo).toISOString() : new Date().toISOString,
+      'base_price': Number(tripPoint.basePrice),
+      'offers': tripPoint.offersIDs
     };
 
-    delete adaptedWaypoint.dateFrom;
-    delete adaptedWaypoint.dateTo;
-    delete adaptedWaypoint.basePrice;
-    delete adaptedWaypoint.offersIDs;
-
-    return adaptedWaypoint;
+    delete adaptedTripPoint.dateFrom;
+    delete adaptedTripPoint.dateTo;
+    delete adaptedTripPoint.basePrice;
+    delete adaptedTripPoint.offersIDs;
+    return adaptedTripPoint;
   }
 }
