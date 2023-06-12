@@ -1,15 +1,14 @@
 import BoardPresenter from './presenter/board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import NewWaypointButton from './view/new-waypoint-button.js';
-import WaypointsApiService from './waypoints-api-service.js';
 import {render} from './framework/render.js';
+import TripPointModel from './model/model-waypoint';
+import DestinationsModel from './model/model-destinations';
+import OffersModel from './model/model-offers';
+import FilterModel from './model/model-filter';
+import NewTripPointButtonView from './view/new-waypoint-button.js';
+import TripPointApiService from './waypoints-api-service.js';
 
-
-const siteHeaderElement = document.querySelector('.trip-controls__filters');
-const container = document.querySelector('.trip-events');
-const placeForButton = document.querySelector('.trip-main');
-
-const AUTHORIZATION = 'Basic abcdef9876';
+const AUTHORIZATION = 'Basic sgkdajgskdas';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const boardContainer = document.querySelector('.trip-events');
