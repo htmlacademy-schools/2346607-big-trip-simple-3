@@ -4,18 +4,18 @@ const FilterType = {
   PAST: 'past'
 };
 
+const FilterTypeDescriptions = {
+  [FilterType.EVERYTHING]: 'EVERYTHING',
+  [FilterType.PAST]: 'PAST',
+  [FilterType.FUTURE]: 'FUTURE',
+};
+
 const SortType = {
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
   PRICE: 'price',
   OFFER: 'offer'
-};
-
-const FilterTypeDescriptions = {
-  [FilterType.EVERYTHING]: 'EVERYTHING',
-  [FilterType.PAST]: 'PAST',
-  [FilterType.FUTURE]: 'FUTURE',
 };
 
 const SortTypeDescription = {
@@ -27,9 +27,9 @@ const SortTypeDescription = {
 };
 
 const UserAction = {
-  UPDATE_WAYPOINT: 'UPDATE_WAYPOINT',
-  ADD_WAYPOINT: 'ADD_WAYPOINT',
-  DELETE_WAYPOINT: 'DELETE_WAYPOINT',
+  UPDATE_TRIPPOINT: 'UPDATE_TRIPPOINT',
+  ADD_TRIPPOINT: 'ADD_TRIPPOINT',
+  DELETE_TRIPPOINT: 'DELETE_TRIPPOINT',
 };
 
 const UpdateType = {
@@ -41,4 +41,4 @@ const UpdateType = {
 
 const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-export {pointTypes, FilterType, SortType, UserAction, UpdateType, SortTypeDescription, FilterTypeDescriptions};
+export {SortType, FilterTypeDescriptions, SortTypeDescription, UserAction, UpdateType, FilterType, pointTypes};

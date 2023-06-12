@@ -1,92 +1,95 @@
-import Observable from '../framework/observable.js';
-import {UpdateType} from '../const.js';
+import { UpdateType } from '../const';
+import Observable from '../framework/observable';
+export default class TripPointModel extends Observable {
+  #tripPointApiService = null;
+  #tripPoints = [];
 
-export default class ModelWaypoint extends Observable {
-  #waypointsApiService = null;
-  #waypoints = [];
-
-  constructor({waypointsApiService}) {
+  constructor ({tripPointApiService}) {
     super();
-    this.#waypointsApiService = waypointsApiService;
+    this.#tripPointApiService = tripPointApiService;
+
   }
 
-  get waypoints() {
-    return this.#waypoints;
+  get tripPoints() {
+    return this.#tripPoints;
   }
 
   async init() {
     try {
-      const waypoints = await this.#waypointsApiService.waypoints;
-      this.#waypoints = waypoints.map(this.#adaptToClient);
-    } catch (err) {
-      this.#waypoints = [];
+      const tripPoints = await this.#tripPointApiService.tripPoints;
+      this.#tripPoints = tripPoints.map(this.#adaptToClient);
+    } catch(err) {
+      this.#tripPoints = [];
     }
+
     this._notify(UpdateType.INIT);
   }
 
-  async updateWaypoint(updateType, update) {
-    const index = this.#waypoints.findIndex((waypoint) => waypoint.id === update.id);
+  async updateTripPoint(updateType, update) {
+    const index = this.#tripPoints.findIndex((tripPoint) => tripPoint.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting waypoint');
+      throw new Error('Can\'t update unexisting tripPoint');
     }
     try {
-      const response = await this.#waypointsApiService.updateWaypoint(update);
-      const updatedWaypoint = this.#adaptToClient(response);
-      this.#waypoints = [
-        ...this.#waypoints.slice(0, index),
-        updatedWaypoint,
-        ...this.#waypoints.slice(index + 1),
+      const response = await this.#tripPointApiService.updateTripPoint(update);
+      const updatedTripPoint = this.#adaptToClient(response);
+      this.#tripPoints = [
+        ...this.tripPoints.slice(0, index),
+        updatedTripPoint,
+        ...this.#tripPoints.slice(index + 1),
       ];
-      this._notify(updateType, updatedWaypoint);
-    } catch (err) {
-      throw new Error('Can\'t update waypoint');
+
+      this._notify(updateType, updatedTripPoint);
+    } catch(err) {
+      throw new Error('Can\'t update tripPoint');
     }
   }
 
-  async addWaypoint(updateType, update) {
+  async addTripPoint(updateType, update) {
     try {
-      const response = await this.#waypointsApiService.addWaypoint(update);
-      const newWaypoint = this.#adaptToClient(response);
-      this.#waypoints = [newWaypoint, ...this.#waypoints];
-      this._notify(updateType, newWaypoint);
-    } catch (err) {
-      throw new Error('Can\'t add waypoint');
+      const response = await this.#tripPointApiService.addTripPoint(update);
+      const newTripPoint = this.#adaptToClient(response);
+      this.#tripPoints = [newTripPoint, ...this.#tripPoints];
+      this._notify(updateType, newTripPoint);
+    } catch(err) {
+      throw new Error('Can\'t add tripPoint');
     }
   }
 
-  async deleteWaypoint(updateType, update) {
-    const index = this.#waypoints.findIndex((waypont) => waypont.id === update.id);
+  async deleteTripPoint(updateType, update) {
+    const index = this.#tripPoints.findIndex((tripPoint) => tripPoint.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting waypoint');
+      throw new Error('Can\'t delete unexisting tripPoint');
     }
 
     try {
-      await this.#waypointsApiService.deleteWaypoint(update);
-      this.#waypoints = [
-        ...this.#waypoints.slice(0, index),
-        ...this.#waypoints.slice(index + 1),
+      await this.#tripPointApiService.deleteTripPoint(update);
+      this.#tripPoints = [
+        ...this.tripPoints.slice(0, index),
+        ...this.#tripPoints.slice(index + 1),
       ];
       this._notify(updateType);
-    } catch (err) {
-      throw new Error('Can\'t delete waypoint');
+    } catch(err) {
+      throw new Error('Can\'t delete tripPoint');
     }
   }
 
-  #adaptToClient(waypoint) {
-    const adaptedWaypoint = {
-      ...waypoint,
-      dateFrom: waypoint['date_from'],
-      dateTo: waypoint['date_to'],
-      offersIDs: waypoint['offers'],
-      basePrice: waypoint['base_price'],
+  #adaptToClient(tripPoint) {
+    const adaptedTripPoint = {...tripPoint,
+      dateFrom: tripPoint['date_from'],
+      dateTo: tripPoint['date_to'],
+      offersIDs: tripPoint['offers'],
+      basePrice: tripPoint['base_price'],
     };
 
-    delete adaptedWaypoint['date_from'];
-    delete adaptedWaypoint['date_to'];
-    delete adaptedWaypoint['base_price'];
-    delete adaptedWaypoint['offers'];
-    return adaptedWaypoint;
+    delete adaptedTripPoint['date_from'];
+    delete adaptedTripPoint['date_to'];
+    delete adaptedTripPoint['base_price'];
+    delete adaptedTripPoint['offers'];
+
+    return adaptedTripPoint;
   }
+
 }
