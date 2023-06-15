@@ -1,4 +1,4 @@
-import ApiService from './framework/api-service';
+import ApiService from './framework/api-service.js';
 
 const Method = {
   GET: 'GET',
@@ -7,8 +7,8 @@ const Method = {
   DELETE: 'DELETE'
 };
 
-export default class TripPointApiService extends ApiService {
-  get tripPoints() {
+export default class PointsApiService extends ApiService {
+  get points() {
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
   }
@@ -19,58 +19,56 @@ export default class TripPointApiService extends ApiService {
   }
 
   get offers() {
-    const resp = this._load({url: 'offers'})
+    return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
-    return resp;
   }
 
-  async updateTripPoint(tripPoint) {
+  updatePoint = async (point) => {
     const response = await this._load({
-      url: `points/${tripPoint.id}`,
+      url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(tripPoint)),
-      headers: new Headers({'Content-Type': 'application/json'}),
+      body: JSON.stringify(this.#adaptToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'})
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
-  }
+  };
 
-  async addTripPoint(tripPoint) {
+  addPoint = async (point) => {
     const response = await this._load({
       url: 'points',
       method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(tripPoint)),
-      headers: new Headers({'Content-Type': 'application/json'}),
+      body: JSON.stringify(this.#adaptToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'})
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
-  }
+  };
 
-  async deleteTripPoint(tripPoint) {
+  deletePoint = async (point) => {
     const response = await this._load({
-      url: `points/${tripPoint.id}`,
+      url: `points/${point.id}`,
       method: Method.DELETE,
     });
 
     return response;
-  }
+  };
 
-  #adaptToServer(tripPoint) {
-    const adaptedTripPoint = {...tripPoint,
-      'date_from': (tripPoint.dateFrom) ? new Date(tripPoint.dateFrom).toISOString() : new Date().toISOString,
-      'date_to': (tripPoint.dateFrom) ? new Date(tripPoint.dateTo).toISOString() : new Date().toISOString,
-      'base_price': Number(tripPoint.basePrice),
-      'offers': tripPoint.offersIDs
+  #adaptToServer = (point) => {
+    const adaptedPoint = {...point,
+      'base_price': point.basePrice,
+      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
+      'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null
     };
 
-    delete adaptedTripPoint.dateFrom;
-    delete adaptedTripPoint.dateTo;
-    delete adaptedTripPoint.basePrice;
-    delete adaptedTripPoint.offersIDs;
-    return adaptedTripPoint;
-  }
+    delete adaptedPoint.basePrice;
+    delete adaptedPoint.dateFrom;
+    delete adaptedPoint.dateTo;
+
+    return adaptedPoint;
+  };
 }

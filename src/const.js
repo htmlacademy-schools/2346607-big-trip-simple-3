@@ -1,44 +1,23 @@
-const FilterType = {
+export const FilterType = {
   EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PAST: 'past'
+  FUTURE: 'future'
 };
 
-const FilterTypeDescriptions = {
-  [FilterType.EVERYTHING]: 'EVERYTHING',
-  [FilterType.PAST]: 'PAST',
-  [FilterType.FUTURE]: 'FUTURE',
-};
-
-const SortType = {
+export const SortType = {
   DAY: 'day',
-  EVENT: 'event',
-  TIME: 'time',
-  PRICE: 'price',
-  OFFER: 'offer'
+  PRICE: 'price'
 };
 
-const SortTypeDescription = {
-  [SortType.DAY]: 'Day',
-  [SortType.EVENT]: 'Event',
-  [SortType.TIME]: 'Time',
-  [SortType.PRICE]: 'Price',
-  [SortType.OFFER]: 'Offer'
+export const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT'
 };
 
-const UserAction = {
-  UPDATE_TRIPPOINT: 'UPDATE_TRIPPOINT',
-  ADD_TRIPPOINT: 'ADD_TRIPPOINT',
-  DELETE_TRIPPOINT: 'DELETE_TRIPPOINT',
-};
-
-const UpdateType = {
+export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
+  ERROR: 'ERROR'
 };
-
-const pointTypes = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-
-export {SortType, FilterTypeDescriptions, SortTypeDescription, UserAction, UpdateType, FilterType, pointTypes};
