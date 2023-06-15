@@ -1,96 +1,76 @@
-import { render, remove, RenderPosition } from '../framework/render';
-import EditFormView from '../view/edit-form';
-import { isEscapeKey } from '../utils/utils';
-import { UserAction, UpdateType } from '../const';
+import { remove, render, RenderPosition } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
+import FormEditingView from '../view/edit-form.js';
 
-export default class NewTripPointPresenter {
-  #handleDataChange = null;
-  #handleDestroy = null;
-  #tripPointListContainer = null;
+export default class NewPointPresenter {
+  #pointListContainer = null;
+  #changeData = null;
+  #newPointForm = null;
+  #destroyCallback = null;
+  #availableDestinations = null;
+  #availableOffers = null;
 
-  #tripPointEditComponent = null;
+  constructor(pointListContainer, changeData) {
 
-  constructor({tripPointListContainer, onDataChange, onDestroy}) {
-    this.#tripPointListContainer = tripPointListContainer;
-    this.#handleDataChange = onDataChange;
-    this.#handleDestroy = onDestroy;
+    this.#pointListContainer = pointListContainer;
+    this.#changeData = changeData;
   }
 
-  init(destinations, offers) {
-    if (this.#tripPointEditComponent !== null) {
+  init = (callback, destinations = null, offers = null) => {
+    this.#availableDestinations = destinations;
+    this.#availableOffers = offers;
+
+    this.#destroyCallback = callback;
+
+    if (this.#newPointForm !== null) {
       return;
     }
 
-    this.#tripPointEditComponent = new EditFormView({
-      destinations: destinations,
-      offers: offers,
-      onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick,
-      isEditForm: false
+    this.#newPointForm = new FormEditingView(this.#availableDestinations, this.#availableOffers);
+    this.#newPointForm.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#newPointForm.setDeleteButtonClickHandler(this.#handleDeleteClick);
+    this.#newPointForm.setEscKeydownHandler(this.#handleDeleteClick);
+
+    render(this.#newPointForm, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+  };
+
+  destroy = () => {
+    if (this.#newPointForm === null) {
+      return;
+    }
+    this.#newPointForm.removeEscKeydownHandler();
+    this.#destroyCallback?.();
+
+    remove(this.#newPointForm);
+    this.#newPointForm = null;
+  };
+
+  setSaving = () => {
+    this.#newPointForm.updateElement({
+      isSaving: true,
     });
+  };
 
-    render(this.#tripPointEditComponent, this.#tripPointListContainer,
-      RenderPosition.AFTERBEGIN);
-
-    document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
-  }
-
-  setAborting() {
+  setAborting = () => {
     const resetFormState = () => {
-      this.#tripPointEditComponent.updateElement({
-        isDisabled: false,
-        isSavinf: false,
+      this.#newPointForm.updateElement({
+        isSaving: false,
         isDeleting: false,
       });
     };
 
-    this.#tripPointEditComponent.shake(resetFormState);
-  }
-
-  destroy() {
-    if (this.#tripPointEditComponent === null) {
-      return;
-    }
-
-    this.#handleDestroy();
-
-    remove(this.#tripPointEditComponent);
-    this.#tripPointEditComponent = null;
-
-    document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
-  }
-
-  setSaving() {
-    this.#tripPointEditComponent.updateElement({
-      isDisabled: true,
-      isSaving: true,
-    });
-  }
-
-  #ecsKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.destroy();
-    }
+    this.#newPointForm.shake(resetFormState);
   };
 
-  #handleFormSubmit = (tripPoint) => {
-    this.#handleDataChange(
-      UserAction.ADD_TRIPPOINT,
+  #handleFormSubmit = (point) => {
+    this.#changeData(
+      UserAction.ADD_POINT,
       UpdateType.MINOR,
-
-      this.#deleteId(tripPoint)
+      point,
     );
-
   };
 
   #handleDeleteClick = () => {
     this.destroy();
   };
-
-  #deleteId = (tripPoint) => {
-    delete tripPoint.id;
-    return tripPoint;
-  };
-
 }

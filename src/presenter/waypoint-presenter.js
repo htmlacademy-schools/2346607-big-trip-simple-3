@@ -1,171 +1,140 @@
-import { render, replace, remove } from '../framework/render';
-import TripPointView from '../view/waypoint';
-import EditFormView from '../view/edit-form';
-import { isEscapeKey } from '../utils/utils';
-import { UserAction, UpdateType } from '../const';
-import { isDatesEqual } from '../utils/formatTime-Utils';
+import { render, replace, remove } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual } from '../utils.js';
+import FormEditingView from '../view/edit-form.js';
+import RoutePointView from '../view/waypoint.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING'
+  EDITING: 'EDITING',
 };
 
-export default class TripPointPresenter {
-  #handleModeChange = null;
-  #handleDataChange = null;
-
-  #tripPointList = null;
-  #editFormComponent = null;
-  #tripPointComponent = null;
-
-  #tripPoint = null;
-  #destinations = null;
-  #offers = null;
+export default class PointPresenter {
+  #pointComponent = null;
+  #pointEditorComponent = null;
+  #container = null;
+  #changeData = null;
+  #changeMode = null;
+  #point = null;
   #mode = Mode.DEFAULT;
+  #availableDestinations = null;
+  #availableOffers = null;
 
-  constructor({tripPointList, onModeChange, onDataChange}) {
-    this.#tripPointList = tripPointList;
-    this.#handleModeChange = onModeChange;
-    this.#handleDataChange = onDataChange;
+  constructor(container, changeData, changeMode, destinations, offers) {
+    this.#container = container;
+    this.#changeData = changeData;
+    this.#changeMode = changeMode;
+    this.#availableDestinations = destinations;
+    this.#availableOffers = offers;
   }
 
-  init(tripPoint, destinations, offers) {
-    this.#tripPoint = tripPoint;
-    this.#destinations = destinations;
-    this.#offers = offers;
+  init(point) {
+    this.#point = point;
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditorComponent = this.#pointEditorComponent;
+    this.#pointComponent = new RoutePointView(this.#availableDestinations, this.#availableOffers, point);
+    this.#pointEditorComponent = new FormEditingView(this.#availableDestinations, this.#availableOffers, point);
+    this.#pointComponent.setEditClickHandler(this.#replacePointToForm);
+    this.#pointEditorComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#pointEditorComponent.setCloseButtonClickHandler(this.#replaceFormToPoint);
+    this.#pointEditorComponent.setDeleteButtonClickHandler(this.#handleDeleteClick);
 
-    const prevTripPointComponent = this.#tripPointComponent;
-    const prevEditFormComponent = this.#editFormComponent;
-
-    this.#tripPointComponent = new TripPointView({
-      tripPoint: this.#tripPoint,
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onEditClick: this.#handleEditClick,
-    });
-
-    this.#editFormComponent = new EditFormView({
-      tripPoint: this.#tripPoint,
-      destinations: this.#destinations,
-      offers: this.#offers,
-      onFormSubmit: this.#handleFormSubmit,
-      onRollUpButton: this.#handleRollupButtonClick,
-      onDeleteClick: this.#handleDeleteClick
-    });
-
-    if (prevTripPointComponent === null || prevEditFormComponent === null) {
-      render(this.#tripPointComponent, this.#tripPointList);
+    if (prevPointComponent === null || prevPointEditorComponent === null) {
+      render(this.#pointComponent, this.#container.element);
       return;
     }
 
-    switch (this.#mode) {
-      case Mode.DEFAULT:
-        replace(this.#tripPointComponent, prevTripPointComponent);
-        break;
-      case Mode.EDITING:
-        replace(this.#tripPointComponent, prevEditFormComponent);
-        this.#mode = Mode.DEFAULT;
+    if (this.#mode === Mode.DEFAULT) {
+      replace(this.#pointComponent, prevPointComponent);
     }
 
-    remove(prevEditFormComponent);
-    remove(prevTripPointComponent);
+    if (this.#mode === Mode.EDITING) {
+      replace(this.#pointComponent, prevPointEditorComponent);
+      this.#mode = Mode.DEFAULT;
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditorComponent);
   }
 
-  setAborting() {
+  destroy = () => {
+    remove(this.#pointEditorComponent);
+    remove(this.#pointComponent);
+  };
+
+  resetView = () => {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditorComponent.reset(this.#point);
+      this.#replaceFormToPoint();
+    }
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditorComponent.updateElement({
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditorComponent.updateElement({
+        isDeleting: true,
+      });
+    }
+  };
+
+  setAborting = () => {
     if (this.#mode === Mode.DEFAULT) {
-      this.#tripPointComponent.shake();
+      this.#pointComponent.shake();
       return;
     }
 
     const resetFormState = () => {
-      this.#editFormComponent.updateElement({
-        isDisabled: false,
+      this.#pointEditorComponent.updateElement({
         isSaving: false,
         isDeleting: false,
       });
     };
 
-    this.#editFormComponent.shake(resetFormState);
-  }
-
-  destroy() {
-    remove(this.#tripPointComponent);
-    remove(this.#editFormComponent);
-  }
-
-  resetView() {
-    if (this.#mode !== Mode.DEFAULT) {
-      this.#editFormComponent.reset(this.#tripPoint);
-      this.#replaceFormToPoint();
-    }
-  }
-
-  setSaving() {
-    if (this.#mode === Mode.EDITING) {
-      this.#editFormComponent.updateElement({
-        isDisabled: true,
-        isSaving: true,
-      });
-    }
-  }
-
-  setDeleting() {
-    if (this.#mode === Mode.EDITING) {
-      this.#editFormComponent.updateElement({
-        isDisabled: true,
-        isDeleting: true,
-      });
-    }
-  }
+    this.#pointEditorComponent.shake(resetFormState);
+  };
 
   #replacePointToForm = () => {
-    replace(this.#editFormComponent, this.#tripPointComponent);
-    this.#handleModeChange();
+    this.#pointEditorComponent.setEscKeydownHandler(this.#replaceFormToPoint);
+    this.#changeMode();
     this.#mode = Mode.EDITING;
+
+    replace(this.#pointEditorComponent, this.#pointComponent);
   };
 
   #replaceFormToPoint = () => {
-    replace(this.#tripPointComponent, this.#editFormComponent);
+    this.#pointEditorComponent.reset(this.#point);
+    replace(this.#pointComponent, this.#pointEditorComponent);
+    this.#pointEditorComponent.removeEscKeydownHandler();
     this.#mode = Mode.DEFAULT;
-    document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
-  };
-
-  #ecsKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.#editFormComponent.reset(this.#tripPoint);
-      this.#replaceFormToPoint();
-      document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
-    }
-  };
-
-
-  #handleEditClick = () => {
-    this.#replacePointToForm();
-    document.body.addEventListener('keydown', this.#ecsKeyDownHandler);
   };
 
   #handleFormSubmit = (update) => {
-    const isMinorUpdate = !isDatesEqual(this.#tripPoint.dateFrom, update.dateFrom) || this.#tripPoint.basePrice !== update.basePrice;
-    this.#handleDataChange(
-      UserAction.UPDATE_TRIPPOINT,
+    const isMinorUpdate =
+      !isDatesEqual(this.#point.dateTo, update.dateTo) ||
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
+      this.#point.basePrice !== update.basePrice;
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    document.body.removeEventListener('keydown', this.#ecsKeyDownHandler);
   };
 
-  #handleRollupButtonClick = () => {
-    this.#editFormComponent.reset(this.#tripPoint);
-    this.#replaceFormToPoint();
-  };
-
-  #handleDeleteClick = (tripPoint) => {
-    this.#handleDataChange(
-      UserAction.DELETE_TRIPPOINT,
+  #handleDeleteClick = (point) => {
+    this.#pointEditorComponent.removeEscKeydownHandler();
+    this.#changeData(
+      UserAction.DELETE_POINT,
       UpdateType.MINOR,
-      tripPoint,
+      point,
     );
   };
-
 }

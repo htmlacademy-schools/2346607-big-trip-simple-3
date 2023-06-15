@@ -1,29 +1,26 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { FilterType } from '../const.js';
 
-const NoTaskTextType = {
-  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
-  [FilterType.FUTURE]: 'There are no future events now',
-  [FilterType.PAST]: 'There are no past events now'
-};
-
-
-const createNoPointsTemplate = (filterType) => {
-  const noTaskTextValue = NoTaskTextType[filterType];
-  return `<p class="trip-events__msg">${noTaskTextValue}</p>`;
-};
-
-export default class NoPointsView extends AbstractView{
-  #filterType = null;
-
-  constructor({filterType}) {
-    super();
-    this.#filterType = filterType;
+const createEmptyListTemplate = (filter, isError) => {
+  if (!isError) {
+    if (filter === 'everything') {
+      return '<p class="trip-events__msg">Click New Event to create your first point</p>';
+    }
+    return '<p class="trip-events__msg">There are no future events now</p>';
   }
+  return '<p class="trip-events__msg">Something went wrong. Please try again later</p>';
+};
 
+export default class EmptyView extends AbstractView {
+  #currentFilter = null;
+  #isError = null;
+
+  constructor(filter, isError) {
+    super();
+    this.#currentFilter = filter;
+    this.#isError = isError;
+  }
 
   get template() {
-    return createNoPointsTemplate(this.#filterType);
+    return createEmptyListTemplate(this.#currentFilter, this.#isError);
   }
-
 }
